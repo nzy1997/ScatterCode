@@ -1,0 +1,18 @@
+name = "YaoXYModel"
+uuid = "99c8490d-fdb8-4950-9754-abf9d2df3755"
+authors = ["nzy1997"]
+version = "1.0.0-DEV"
+
+[deps]
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Makie = "ee78f7c6-11fb-53f2-987a-cfe4a2b5a57a"
+Yao = "5872b779-8223-5990-8dd0-5abbb0748c8c"
+
+[compat]
+julia = "1.10"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

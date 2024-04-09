@@ -1,0 +1,13 @@
+name = "Scattering"
+uuid = "2c322c1a-d53d-41aa-9e42-03a3e63ddf04"
+authors = ["nzy1997"]
+version = "1.0.0-DEV"
+
+[compat]
+julia = "1.10"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
