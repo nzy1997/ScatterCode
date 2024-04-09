@@ -1,5 +1,5 @@
 using Test
-using XYModelwithYao
+using Scattering
 using LinearAlgebra
 
 @testset "fraction_approximate" begin
@@ -17,7 +17,7 @@ end
 
 @testset "enlarge_ulist" begin
     ulist = [random_unitary(2) for i in 1:2]
-    @test (XYModelwithYao.enlarge_ulist(ulist,3) |> length) == 42
+    @test (Scattering.enlarge_ulist(ulist,3) |> length) == 42
 end
 
 @testset "universal_check" begin

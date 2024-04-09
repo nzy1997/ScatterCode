@@ -1,9 +1,8 @@
 module Scattering
 using Graphs
-using SimpleWeightedGraphs
-using Enzyme
 using Optim
 using ForwardDiff
+using LinearAlgebra
 
 
 # scatter_center
