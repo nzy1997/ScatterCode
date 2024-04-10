@@ -2,9 +2,7 @@ struct ScatterGraph
 	graph::SimpleGraph{Int}
 	input_vertex::Vector{Int}
 	output_vertex::Vector{Int}
-	# weight::Vector{Float64}
 end
-# ScatterGraph(graph::SimpleGraph, input_vertex::Vector{Int}, output_vertex::Vector{Int}) = ScatterGraph(graph, input_vertex, output_vertex, ones(Float64, length(edges(graph))))
 
 function matrix_adjacency(g::SimpleGraph{Int}, weights::Vector{T}) where T
 	edge = collect(edges(g))
