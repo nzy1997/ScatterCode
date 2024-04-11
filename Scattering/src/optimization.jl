@@ -1,9 +1,9 @@
 function train_loss(graph::ScatterGraph)
-	return x -> abs2_loss(graph, exp(pi * im * x[1]))
+	return x -> abs_loss(graph, exp(pi * im * x[1]))
 end
 
 function train_weighted_loss(g::ScatterGraph)
-	return x -> abs2_loss(g, exp(pi * im * x[1]), x[2:end])
+	return x -> abs_loss(g, exp(pi * im * x[1]), x[2:end])
 end
 
 function weighted_gra!(G, x0, g::ScatterGraph)

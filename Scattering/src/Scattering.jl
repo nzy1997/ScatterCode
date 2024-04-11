@@ -11,7 +11,7 @@ using LuxorGraphPlot.Luxor
 using SparseArrays
 
 # scatter_center
-export ScatterGraph, abs2_loss, perm_adjacency, scatter_matrix, matrix_adjacency
+export ScatterGraph, abs_loss, perm_adjacency, scatter_matrix, matrix_adjacency
 
 # optimization
 export train_loss, optimize_momentum, optimize_weighted_momentum, weighted_gra!

@@ -14,7 +14,7 @@ Random.seed!(1234)
     direction = direction/norm(direction)
     x1 = x0 + δ * direction
     gra = weighted_gra!(G, x0, g)
-    @test abs2_loss(g, exp(pi * im * x1[1]), x1[2:end]) ≈ abs2_loss(g, exp(pi * im * x0[1]), x0[2:end]) +  δ * dot(gra, direction)
+    @test abs_loss(g, exp(pi * im * x1[1]), x1[2:end]) ≈ abs_loss(g, exp(pi * im * x0[1]), x0[2:end]) +  δ * dot(gra, direction)
 end
 
 @testset "optimize_momentum" begin
@@ -28,7 +28,7 @@ end
     g = ScatterGraph(SimpleGraph(Edge.([(1,5), (2,7), (3, 8), (4, 10), (5,6), (5,8), (6,7), (7,10), (8,9), (9, 10)])), [1, 2], [3, 4])
     x0 = rand(Float64, length(edges(g.graph))+1)
     x, min = optimize_weighted_momentum(g,x0)
-    @show x, min
+    @show x,min
     @test isapprox(min, 0.0, atol=1e-6)
 end
 
