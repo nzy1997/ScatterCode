@@ -43,6 +43,5 @@ end
 @testset "scatter_center hardmard" begin
     g = andrew_hadamard()
     z = exp(-pi/2*im)
-    @show abs_loss(g, z)
     @test isapprox(abs_loss(g, z),0.0, atol=1e-14)
 end

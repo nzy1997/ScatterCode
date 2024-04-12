@@ -80,7 +80,7 @@ end
 function gaussian_packet_ontail(gt::GraphWithTails; intail::Int, k0, x0, Δx)
     packet = generate_gaussian_packet(length(gt.tails[intail]), x0; k0, Δx)
     v = zeros(ComplexF64, nv(gt.graph))
-    v[gt.tails[intail]] .= packet #[end:-1:1]
+    v[gt.tails[intail]] .= packet # [end:-1:1]
     return v
 end
 
@@ -97,7 +97,7 @@ function simulate_graph_with_tails(gt::GraphWithTails, h0::AbstractMatrix;
 end
 
 function simulate_ScatterGraph(g::ScatterGraph, x1::Real ;Nt=1500, tailsize::Int=500, intail::Int=1) # x1 is k/pi where k is momentum
-    gt = graph_with_tails(g; heads=[1, 2,3,4], tailsize)
+    gt = graph_with_tails(g; heads=[g.input_vertex...,g.output_vertex...], tailsize)
     h0 = matrix_adjacency(g.graph, g.weights .- 1) ./ 2  # difference in weight
     k0 = (mod(x1,2.0) > 1.0 ? (mod(x1,2.0)-2.0)*pi : mod(x1,2.0)*pi)
     waves = Vector{ComplexF64}[]

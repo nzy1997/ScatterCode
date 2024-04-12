@@ -53,6 +53,5 @@ end
     u1=get_u1(s)
     u2=get_u2(s)
     ulist = [u1, u2]
-    @show u2 |> typeof
     @test universal_check(ulist,1)
 end

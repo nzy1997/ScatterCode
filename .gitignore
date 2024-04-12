@@ -8,3 +8,4 @@ Manifest.toml
 *.png
 _learn
 .DS_Store
+*.gif

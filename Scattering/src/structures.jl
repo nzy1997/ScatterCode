@@ -3,6 +3,12 @@
 # Universal computation by quantum walk (Andrew M. Childs)
 # arXiv:0806.1972
 
+# Fig. 1 (b)
+function andrew_phase_shift(weights = ones(Float64, 7))
+    return ScatterGraph(SimpleGraph(Edge.([(1,3), (2,3), (3,4), (4,5), (5,6), (6,7), (7,4)])),weights ,[1],[2])
+end
+
+
 # Fig. 1 (c)
 # U = [-i 1; 1 i]
 # 1 -- 5 -- 8 -- 3
@@ -23,7 +29,7 @@ end
 #      |
 # 1 -- 4 -- 2
 function andrew_momentum_filter(weights = ones(Float64, 7))
-    return ScatterGraph(SimpleGraph(Edge.([(1,4), (2,4), (3, 5), (4, 5), (5, 6), (6,7), (6,8)])),weights, [1, 2], [3, 4])
+    return ScatterGraph(SimpleGraph(Edge.([(1,4), (2,4), (3, 5), (4, 5), (5, 6), (6,7), (6,8)])),weights, [1], [2])
 end
 
 
@@ -37,7 +43,7 @@ end
 # 1 -- 3 -- 2
 function andrew_momentum_separator(weights = ones(Float64, 7))
     return ScatterGraph(SimpleGraph(Edge.([(1,3), (2,3), (3, 4), (4, 5), (4,6), (5,6), (6,7)])),
-        weights, [1, 2], [3,4])
+        weights, [1], [2])
 end
 
 

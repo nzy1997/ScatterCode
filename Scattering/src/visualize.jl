@@ -10,7 +10,7 @@ function animate_wave(gt::GraphWithTails, waves::AbstractVector;
 
     function frame(scene, framenumber::Int)
         Luxor.origin(0, 0)
-        vertex_sizes=vertex_size .* abs.(waves[min(length(waves), 1+step*(framenumber-1))])
+        vertex_sizes=vertex_size .* abs2.(waves[min(length(waves), 1+step*(framenumber-1))])
         vertex_stroke_colors=[i in gt.center ? "red" : "black" for i=1:nv(gt.graph)]
         LuxorGraphPlot._show_graph(locs, edgs; texts=fill("", nv(gt.graph)),
             vertex_sizes, vertex_stroke_colors)

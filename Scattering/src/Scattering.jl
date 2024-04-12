@@ -12,10 +12,10 @@ using SparseArrays
 
 # scatter_center
 export ScatterGraph, abs_loss, perm_adjacency, matrix_adjacency
-export scatter_matrix, get_u1, get_u2, get_r
+export scatter_matrix, get_u1, get_u2, get_r1,relection_rate
 
 # structures
-export andrew_basis_change, andrew_momentum_filter, andrew_momentum_separator, andrew_hadamard, wuzi
+export andrew_phase_shift, andrew_basis_change, andrew_momentum_filter, andrew_momentum_separator, andrew_hadamard, wuzi
 
 # optimization
 export OptimizedResult, train_loss, optimize_momentum, optimize_weighted_momentum, weighted_gra!

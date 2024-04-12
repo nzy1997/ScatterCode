@@ -71,7 +71,12 @@ function scatter_matrix(g::ScatterGraph, z)
 	A = W[1:N, 1:N]
 	B = W[(N+1):end, 1:N]
 	D = W[(N+1):end, (N+1):end]
-	return -inv(Q(A, B, D, z)) * Q(A, B, D, inv(z))
+	Q1 = Q(A, B, D, z)
+	Q2 = Q(A, B, D, inv(z))
+	# c1, c2 = cond(Q1), cond(Q2)
+	# (c1 > 10 || c2 > 10) && throw(ArgumentError("Condition number of Q1 and Q2 should be less than 10, got $c1 and $c2"))
+	# @show c1, c2,cond(I * (1 / z + z) - D)
+	return -inv(Q1) * Q2
 end
 
 function get_u1(s::AbstractMatrix)
@@ -84,7 +89,7 @@ function get_u2(s::AbstractMatrix)
     return s[n+1:end,1:n]
 end
 
-function get_r(s::AbstractMatrix)
+function get_r1(s::AbstractMatrix)
     n = size(s, 1) ÷ 2
     return s[1:n,1:n]
 end

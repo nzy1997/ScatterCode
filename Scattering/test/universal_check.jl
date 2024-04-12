@@ -5,7 +5,7 @@ using LinearAlgebra
 @testset "fraction_approximate" begin
     @test fraction_approximate(1/3, 5) ≈ 1/3
     @test isapprox(fraction_approximate(12541/4333, 10) , 12541/4333; atol=1e-4)
-    @show fraction_approximate(1/3+1e-10, 10)
+    @test fraction_approximate(1/3+1e-10, 10) ≈ 1/3
 end
 
 @testset "unitary_decomposition" begin
@@ -22,7 +22,7 @@ end
 
 @testset "universal_check" begin
     ulist = [random_unitary(2) for i in 1:2]
-    @show universal_check(ulist,2)
+    @test universal_check(ulist,2)
 end
 
 @testset "universal_check hardmard T" begin
