@@ -8,9 +8,10 @@ struct ScatterGraph{RT}
 		@assert all(1 <= i <= nv(graph) for i in input_vertex)
 		@assert all(1 <= i <= nv(graph) for i in output_vertex)
 		@assert input_vertex ∩ output_vertex |> isempty
-		new(graph, weights, input_vertex, output_vertex)
+		new{RT}(graph, weights, input_vertex, output_vertex)
 	end
 end
+ScatterGraph(graph::SimpleGraph{Int},  input_vertex::Vector{Int}, output_vertex::Vector{Int})=ScatterGraph(graph, ones(Float64, ne(graph)), input_vertex, output_vertex)
 
 function matrix_adjacency(g::SimpleGraph{Int}, weights::Vector{T}) where T
 	@assert length(weights) == ne(g)
@@ -33,27 +34,26 @@ function create_Q(nv::Int, input_vertices, output_vertices)
 	end
 	return Q
 end
+function abs_loss(g::ScatterGraph,z)
+	return abs_loss(g.graph, g.weights, g.input_vertex, g.output_vertex, z)
+end
 
-function abs_loss(g::ScatterGraph, z::T, W::Matrix) where T
+function abs_loss(graph::SimpleGraph, weights, input_vertex, output_vertex, z::T) where T
+	W = matrix_adjacency(graph, weights)
 	nv = size(W, 1)
-	Q = create_Q(nv, g.input_vertex, g.output_vertex)
+	Q = create_Q(nv, input_vertex, output_vertex)
 	A = I - W * z + z^2 * Q
 	q, r = qr(A)
 	loss = 0.0
-	for k in 1:length(g.input_vertex)
+	for k in input_vertex
 		b = zeros(T, nv)
-		b[g.input_vertex[k]] = 1 - z^2
+		b[k] = 1 - z^2
 		x = UpperTriangular(r) \ (q' * b)
-		loss += sum(abs2.(x[g.input_vertex]))
-		loss -= abs2(x[g.input_vertex[k]])
-		loss += abs2(x[g.input_vertex[k]] - 1)
+		loss += sum(abs.(x[input_vertex]))
+		loss -= abs(x[k])
+		loss += abs(x[k] - 1)
 	end
 	return loss
-end
-
-function abs_loss(g::ScatterGraph, z)
-	W = matrix_adjacency(g.graph, g.weights)
-    return abs_loss(g, z, W)
 end
 
 # Scatter Matrix
@@ -63,7 +63,10 @@ function perm_adjacency(g::ScatterGraph, W::Matrix)
 end
 
 Q(A, B, D, z) = I - z * (A + B' * inv(I * (1 / z + z) - D) * B)
-function scatter_matrix(g::ScatterGraph, z, W::Matrix)
+function scatter_matrix(g::ScatterGraph, z)
+	W0 = matrix_adjacency(g.graph, g.weights)
+	perm = [g.input_vertex..., g.output_vertex..., setdiff(1:size(W0, 1), vcat(g.input_vertex, g.output_vertex))...]
+	W = W0[perm, perm]
 	N = length(g.input_vertex) + length(g.output_vertex)
 	A = W[1:N, 1:N]
 	B = W[(N+1):end, 1:N]
@@ -71,11 +74,19 @@ function scatter_matrix(g::ScatterGraph, z, W::Matrix)
 	return -inv(Q(A, B, D, z)) * Q(A, B, D, inv(z))
 end
 
-function scatter_matrix(g::ScatterGraph, z)
-	return scatter_matrix(g, z, ones(Float64, ne(g.graph)))
+function get_u1(s::AbstractMatrix)
+    n = size(s, 1) ÷ 2
+    return s[1:n,n+1:end]
 end
 
-function scatter_matrix(g::ScatterGraph, z, weights::Vector)
-	W = matrix_adjacency(g.graph, weights)
-    return scatter_matrix(g, z, perm_adjacency(g, W))
+function get_u2(s::AbstractMatrix)
+    n = size(s, 1) ÷ 2
+    return s[n+1:end,1:n]
 end
+
+function get_r(s::AbstractMatrix)
+    n = size(s, 1) ÷ 2
+    return s[1:n,1:n]
+end
+
+relection_rate(s::AbstractMatrix) = sum(abs2, get_r1(s))

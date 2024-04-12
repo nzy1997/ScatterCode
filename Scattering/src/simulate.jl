@@ -3,6 +3,7 @@ struct GraphWithTails
     center::Vector{Int}
     tails::Vector{Vector{Int}}
 end
+graph_with_tails(g::ScatterGraph; heads::Vector{Int}, tailsize::Int) = graph_with_tails(g.graph; heads, tailsize)
 
 function graph_with_tails(g0::SimpleGraph; heads::Vector{Int}, tailsize::Int)
     ntail = length(heads)
@@ -93,4 +94,13 @@ function simulate_graph_with_tails(gt::GraphWithTails, h0::AbstractMatrix;
     wave = gaussian_packet_ontail(gt; intail, k0, x0, Δx)
     h = get_hamiltonian(gt, h0)
     simulate!(wave, h; Nt, Δt, cache)
+end
+
+function simulate_ScatterGraph(g::ScatterGraph, x1::Real ;Nt=1500, tailsize::Int=500, intail::Int=1) # x1 is k/pi where k is momentum
+    gt = graph_with_tails(g; heads=[1, 2,3,4], tailsize)
+    h0 = matrix_adjacency(g.graph, g.weights .- 1) ./ 2  # difference in weight
+    k0 = (mod(x1,2.0) > 1.0 ? (mod(x1,2.0)-2.0)*pi : mod(x1,2.0)*pi)
+    waves = Vector{ComplexF64}[]
+    simulate_graph_with_tails(gt, h0;k0, Nt, cache=waves,intail)
+    return waves,gt
 end
