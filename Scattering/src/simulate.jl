@@ -41,7 +41,8 @@ function generate_gaussian_packet(n::Int, x0; k0, Δx)
     @assert -π <= k0 <= π "momentum should be in range [-π, π], got $k0"
     Δk = 1/Δx
     ks = 2π .* (collect(0:n-1) .- (n÷2)) ./ n
-    packet_k = exp.((ks .- k0) .^ 2 ./ (-2*Δk^2))
+    packet_k_half = exp.((ks .- k0) .^ 2 ./ (-2*Δk^2))
+    packet_k =[packet_k_half[n÷2+1:end]... ,packet_k_half[1:n÷2]...]
     amplitude = circshift!(ifft(packet_k), x0)
     return normalize!(amplitude)
 end

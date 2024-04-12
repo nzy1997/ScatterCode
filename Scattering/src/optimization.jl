@@ -10,9 +10,7 @@ function train_loss(g::ScatterGraph)
 end
 
 function train_weighted_loss(g::ScatterGraph)
-	# return x -> abs_loss(g.graph, x[2:end], g.input_vertex, g.output_vertex, exp(pi * im * x[1]))
-	return x -> abs_loss(g.graph, x[2:end], g.input_vertex, g.output_vertex, exp(pi * im * (1-x[1])))
-	# return x -> (abs_loss(g.graph, x[2:end], g.input_vertex, g.output_vertex, exp(pi * im * x[1]))+abs_loss(g.graph, x[2:end], g.input_vertex, g.output_vertex, exp(pi * im * (1 - x[1]))))
+	return x -> abs_loss(g.graph, x[2:end], g.input_vertex, g.output_vertex, exp(pi * im * x[1]))
 end
 
 function weighted_gra!(G, x0, g::ScatterGraph)
@@ -30,6 +28,10 @@ function optimize_momentum(g::ScatterGraph, x0::Real)
 end
 
 function optimize_weighted_momentum(g::ScatterGraph, k0)
+	# lower = [0.001, fill(-Inf,length(g.weights))...]
+	# upper = [1.999, fill(Inf,length(g.weights))...]
+	# inner_optimizer = GradientDescent(linesearch=LineSearches.BackTracking(order=3))
+	# a = optimize(train_weighted_loss(g), grad(g),lower, upper, [k0,g.weights...], Fminbox(inner_optimizer))
 	a = optimize(train_weighted_loss(g), grad(g), [k0,g.weights...], LBFGS())
 	g2 = ScatterGraph(g.graph, a.minimizer[2:end], g.input_vertex, g.output_vertex) 
 	return OptimizedResult(a.minimizer, a.minimum, scatter_matrix(g2, exp(pi * im * a.minimizer[1])), g2)

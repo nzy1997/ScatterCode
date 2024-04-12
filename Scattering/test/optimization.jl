@@ -2,7 +2,7 @@ using Test
 using Scattering
 using Scattering.Graphs
 using LinearAlgebra
-import Random
+using Random
 
 @testset "gradient" begin
     g = andrew_basis_change()
@@ -29,6 +29,7 @@ end
     x0 = rand(Float64, 10)
     g = andrew_basis_change(x0)
     outcome = optimize_weighted_momentum(g,rand(Float64))
+    @show outcome.minimum, outcome.minimizer[1]
     @test isapprox(outcome.minimum, 0.0, atol=1e-6)
 end
 

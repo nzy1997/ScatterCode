@@ -2,7 +2,7 @@
 
 julia_version = "1.10.2"
 manifest_format = "2.0"
-project_hash = "57a02d584618c58a966a4fab5bc96bffb71e462d"
+project_hash = "0f036898db4cc880c61b7d1fd9a1761cbd3935b3"
 
 [[deps.AbstractFFTs]]
 deps = ["LinearAlgebra"]
@@ -542,10 +542,10 @@ uuid = "ae8d54c2-7ccd-5906-9d76-62fc9837b5bc"
 version = "3.8.0"
 
 [[deps.LuxorGraphPlot]]
-deps = ["Graphs", "LinearAlgebra", "Luxor", "MLStyle"]
-git-tree-sha1 = "90656be29c9e69f9e7bc8323df8a4f4da0c7d5f6"
+deps = ["Graphs", "LinearAlgebra", "Luxor"]
+git-tree-sha1 = "44e653dc4a191d7af80c82bb84b9d7c3064628b0"
 uuid = "1f49bdf2-22a7-4bc4-978b-948dc219fbbc"
-version = "0.3.1"
+version = "0.2.2"
 
 [[deps.LuxurySparse]]
 deps = ["LinearAlgebra", "Random", "SparseArrays", "StaticArrays"]

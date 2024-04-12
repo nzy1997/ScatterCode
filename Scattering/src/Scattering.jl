@@ -1,6 +1,7 @@
 module Scattering
 using Graphs
 using Optim
+using LineSearches
 using ForwardDiff
 using LinearAlgebra
 
