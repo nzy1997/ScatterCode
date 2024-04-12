@@ -12,3 +12,11 @@ end
 @testset "universal_check" begin
     include("universal_check.jl")
 end
+
+@testset "simulate" begin
+    include("simulate.jl")
+end
+
+@testset "visualize" begin
+    include("visualize.jl")
+end

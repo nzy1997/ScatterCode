@@ -78,6 +78,14 @@ function universal_check(ulist::Vector{Matrix{ComplexF64}}, enlarge_maxiter::Int
 	return universal_check(ulist_copy)
 end
 
+function universal_check(g::ScatterGraph,z, enlarge_maxiter::Int)
+	s = scatter_matrix(g,z)
+	u1 = get_u1(s)
+	u2 = get_u2(s)
+	ulist = [u1, u2]
+	return universal_check(ulist, enlarge_maxiter)
+end
+
 function random_unitary(n::Int)
 	u, r = qr(randn((n, n)) + im * randn((n, n)))
 	return Matrix(u)
