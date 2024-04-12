@@ -33,5 +33,7 @@ function check_sg(sg::SimpleGraph,input_vertex::Vector{Int}, output_vertex::Vect
     end
 end
 
-g = andrew_hadamard()
-check_sg(g.graph, g.input_vertex, g.output_vertex, "examples/andrew_hadamard/x1",100)
+# g = andrew_hadamard()
+# s = 756080199614591, 3.839080041220371e-15
+# s = 356850098191873, 6.635008359660213e-14
+# check_sg(g.graph, g.input_vertex, g.output_vertex, "examples/andrew_hadamard/x1",100)

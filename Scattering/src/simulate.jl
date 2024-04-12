@@ -81,13 +81,13 @@ end
 function gaussian_packet_ontail(gt::GraphWithTails; intail::Int, k0, x0, Δx)
     packet = generate_gaussian_packet(length(gt.tails[intail]), x0; k0, Δx)
     v = zeros(ComplexF64, nv(gt.graph))
-    v[gt.tails[intail]] .= packet # [end:-1:1]
+    v[gt.tails[intail]] .= packet[end:-1:1]
     return v
 end
 
 function simulate_graph_with_tails(gt::GraphWithTails, h0::AbstractMatrix;
         intail::Int=1, k0::Real=π/4,
-        x0::Int=round(Int, 0.8*length(gt.tails[intail])),
+        x0::Int=round(Int, 0.2*length(gt.tails[intail])),
         Δx::Real=0.04*length(gt.tails[intail]), 
         Nt::Int=1000, Δt::Real=1.0,
         cache::Union{Vector, Nothing}=nothing
