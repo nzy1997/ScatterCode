@@ -1,9 +1,13 @@
-function time_evo(psi::ConstParticalNumberFermionState{T,PN}, H::CSCSimpleFermionHamiltonian, ttotal::Float64,tstep::Float64) where {T,PN}
-    psis = ConstParticalNumberFermionState{T,PN}[]
+function time_evo(psi::Vector{T}, H::AbstractMatrix{T}, Nt::Int,tstep::Float64) where {T}
+    psis = Vector{T}[]
     push!(psis, psi)
-    for t in 0:tstep:ttotal
-        psi = apply_hamiltonian(H, psi)
+    for _ = 1:Nt
+        psi,info = exponentiate(H, -im * tstep, psi,
+                                   krylovdim=min(1000, size(H,1)),
+                                   ishermitian=true,
+                                   eager=true,)
         push!(psis, psi)
     end
-    return expm(-im * H * t) * ψ
+    return psis
 end
+
