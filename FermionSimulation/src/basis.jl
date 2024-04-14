@@ -91,8 +91,8 @@ function apply_SFS_on_basis(fs::StandardFermionicString{T,N}, basis::ConstPartic
     return coeff, ConstParticalNumberFermionBasis(new_basis)
 end
 
-function apply_hamiltonian(h::CSCFH{T1,N}, state::ConstParticalNumberFermionState{T2,PN}) where {T1,N,T2,PN}
-    megsf = Pair{T2,ConstParticalNumberFermionBasis{PN}}[]
+function apply_hamiltonian(h::CSCFH{T,N}, state::ConstParticalNumberFermionState{T,PN}) where {N,T,PN}
+    megsf = Pair{T,ConstParticalNumberFermionBasis{PN}}[]
     for (coeff,basis) in state.megs 
         for pos in combinations(basis.indices, N÷2)
             k = upper_triangle_count(pos...,h.n)

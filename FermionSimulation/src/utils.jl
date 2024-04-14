@@ -18,3 +18,17 @@ function isevenperm(p)
     even
 end
 
+# upper_triangle_count and its inverse
+upper_triangle_count(j::Int, n::Int) = j
+
+function upper_triangle_count(i::Int, j::Int, n::Int)
+	@assert 1 <= i < j <= n
+	return (2 * n - i) * (i - 1) ÷ 2 + j - i
+end
+
+function upper_triangle_count_inv(k::Int, n::Int)
+	@assert 1 <= k <= matrix_size(4,n)
+	i = Int(ceil((2 * n - 1 - sqrt((2 * n - 1)^2 - 8 * k)) / 2))
+	j = k + i - (2 * n - i) * (i - 1) ÷ 2
+	return i, j
+end

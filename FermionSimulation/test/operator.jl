@@ -54,20 +54,6 @@ end
     end
 end
 
-@testset "CSCFH quadratic" begin
-    fs1 = StandardFermionicString(2.0, annilation(1), creation(2))
-    fs2 = StandardFermionicString(3.0, annilation(3), creation(4))
-    fs3 = StandardFermionicString(-1.0, creation(4), annilation(3))
-    @show CSCFH([fs1,fs2,fs3],4)
-end 
-
-@testset "CSCFH quartic" begin
-    fs1 = StandardFermionicString(2.0, annilation(4), creation(1), annilation(3), creation(4))
-    fs2 = StandardFermionicString(3.0, annilation(3), creation(4), annilation(1), creation(2))
-    fs3 = StandardFermionicString(-10.0, creation(4), annilation(3), creation(2), annilation(1))
-    @show CSCFH([fs1,fs2,fs3],4)
-end
-
 @testset "CSCSimpleFermionHamiltonian" begin
     fs1 = StandardFermionicString(2.0, annilation(1), creation(2))
     fs2 = StandardFermionicString(3.0, annilation(3), creation(4))
@@ -75,5 +61,7 @@ end
     fs4 = StandardFermionicString(2.0, annilation(4), creation(1), annilation(3), creation(4))
     fs5 = StandardFermionicString(3.0, annilation(3), creation(4), annilation(1), creation(2))
     fs6 = StandardFermionicString(-10.0, creation(4), annilation(3), creation(2), annilation(1))
-    @show CSCSimpleFermionHamiltonian(SimpleFermionHamiltonian([fs1,fs2,fs3],[fs4,fs5,fs6]),4)
+    @test CSCFH([fs1,fs2,fs3],4) isa CSCFH{Float64,2}
+    @test CSCFH([fs4,fs5,fs6],4) isa CSCFH{Float64,4}
+    @test CSCSimpleFermionHamiltonian(SimpleFermionHamiltonian([fs1,fs2,fs3],[fs4,fs5,fs6]),4) isa CSCSimpleFermionHamiltonian
 end
