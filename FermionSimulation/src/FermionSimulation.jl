@@ -4,13 +4,16 @@ using Combinatorics
 using Graphs
 using LinearAlgebra
 
-# basis
-export ConstParticalNumberFermionBasis, all_bases
-
 # operator
-export SpaceConfig, FermionOperator, FAnnilation, FCreation, isfermionic, StandardFermionicString,get_name_of_flavor
-export FermionHamiltonian
+export Fop, StandardFermionicString, creation, annilation
+export SimpleFermionHamiltonian, CSCFH, CSCSimpleFermionHamiltonian
+export upper_triangle_count,upper_triangle_count_inv
 
+# basis
+export ConstParticalNumberFermionBasis, all_bases, ConstParticalNumberFermionState ,sort_and_combine_terms
+export apply_SFS_on_basis, apply_hamiltonian
+
+include("utils.jl")
 include("operator.jl")
 include("basis.jl")
 

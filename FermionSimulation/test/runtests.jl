@@ -1,6 +1,10 @@
 using FermionSimulation
 using Test
 
-@testset "FermionSimulation.jl" begin
-    # Write your tests here.
+@testset "operator.jl" begin
+    include("operator.jl")
+end
+
+@testset "basis.jl" begin
+    include("basis.jl")
 end
