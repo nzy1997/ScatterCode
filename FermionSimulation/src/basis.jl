@@ -1,75 +1,73 @@
 abstract type AbstractBasis end
 abstract type AbstractFermionBasis <: AbstractBasis end
-abstract type AbstractFermionState end
 
-struct ConstParticalNumberFermionBasis{PN} <: AbstractFermionBasis
+# https://en.wikipedia.org/wiki/Fock_space
+# PN: particle number
+struct FockBasis{PN} <: AbstractFermionBasis
     indices::NTuple{PN,Int}
-    function ConstParticalNumberFermionBasis(indices::NTuple{PN,Int}) where PN
-        @assert length(indices) == PN "The number of indices should be same as the number of particals"
+    function FockBasis(indices::NTuple{PN,Int}) where PN
         new{PN}(TupleTools.sort(indices))
     end
 end
-CPNFB(indices::NTuple) = ConstParticalNumberFermionBasis(indices)
-Base.:(==)(b1::ConstParticalNumberFermionBasis{PN}, b2::ConstParticalNumberFermionBasis{PN}) where PN = all(b1.indices == b2.indices)
+Base.:(==)(b1::FockBasis{PN}, b2::FockBasis{PN}) where PN = b1.indices == b2.indices
 
-function Base.show(io::IO,::MIME"text/plain", c::ConstParticalNumberFermionBasis{PN}) where PN
-    print(io, "|$(c.indices)>")
+function Base.show(io::IO,::MIME"text/plain", c::FockBasis{PN}) where PN
+    print(io, "|$(join([string(ci) for ci in c.indices], ", "))⟩")
 end
-Base.show(io::IO, c::ConstParticalNumberFermionBasis) = Base.show(io, MIME("text/plain"), c)
+Base.show(io::IO, c::FockBasis) = Base.show(io, MIME("text/plain"), c)
 
-function all_bases(PN::Int,n::Int)
-    bases = ConstParticalNumberFermionBasis{PN}[]
-    for pos in combinations(1:n, PN)
-        push!(bases, ConstParticalNumberFermionBasis((pos...,)))
-    end
-    return bases
+function all_bases(PN::Int, n::Int)
+    FockBasis.(NTuple{PN, Int}.(combinations(1:n, PN)))
 end
 
-function bases_dict(bases::Vector{ConstParticalNumberFermionBasis{PN}}) where PN
-    return Dict([b => i for (i,b) in enumerate(bases)])
+function bases_dict(bases::Vector{FockBasis{PN}}) where PN
+    return Dict(zip(bases, 1:length(bases)))
 end
 
-function apply_SFS_on_basis(fs::StandardFermionicString{T,N}, basis::ConstParticalNumberFermionBasis) where {T,N}
-    coeff = fs.coeff
-    for op in fs.ops[N:-1:(N÷2+1)]
-        index=findfirst(x -> x == op.flavor, basis.indices) 
-        isnothing(index) && return zero(T), basis
-        coeff *= (-1)^(index+1)
-    end
-    new_basis = basis.indices[findall(x -> x ∉ [fs.ops[i].flavor for i in N:-1:(N÷2+1)], basis.indices)]
-    for op in fs.ops[1:N÷2]
-        index = findfirst(x -> x >= op.flavor, new_basis) 
-        if isnothing(index)
-            coeff *= (-1)^length(new_basis)
-        else
-            isequal(new_basis[index],op.flavor) && return zero(T), basis    
-            coeff *= (-1)^(index+1)
-        end
-    end
-    new_basis=(sort(union([fs.ops[i].flavor for i in 1:N÷2], new_basis))...,)
-    return coeff, ConstParticalNumberFermionBasis(new_basis)
-end
-
-function CSCFH_under_bases(h::CSCFH{T,N}, bases::Vector{ConstParticalNumberFermionBasis{PN}},dict::Dict{ConstParticalNumberFermionBasis{PN}, Int64}) where {T,N,PN}
-    n = length(bases)
+function CSCFH_under_bases(h::CSCFH{T,N}, bases::Vector{FockBasis{PN}},dict::Dict{FockBasis{PN}, Int64}) where {T,N,PN}
     rowindices, colindices, data = Int[],Int[],T[]
+    locations = Tuple.(combinations(1:PN, N÷2))
+    _CSCFH_under_bases!(h, bases, dict, rowindices, colindices, data, locations)
+end
+
+function _CSCFH_under_bases!(h::CSCFH{T,N}, bases::Vector{FockBasis{PN}},dict::Dict{FockBasis{PN}, Int64}, rowindices, colindices, data, locations) where {T,N,PN}
+    n = length(bases)
     for base in bases
-        for pos in combinations(base.indices, N÷2)
+        for loc in locations
+            pos = getindex.(Ref(base.indices), loc)
             k = upper_triangle_count(pos...,h.n)
             for id in h.colptr[k]:h.colptr[k+1]-1
-                coeff, new_base = apply_SFS_on_basis(h.nzval[id],base)
-                if !iszero(coeff) 
+                fs = h.nzval[id]
+                flavors = ntuple(i->fs.ops[i].flavor, N)
+                sign = parity_judge(T,flavors,base)
+                if !iszero(sign)
+                    new_base = apply_SFS_on_basis_withoutsign(flavors,base)
                     push!(colindices, dict[base])
                     push!(rowindices, dict[new_base])
-                    push!(data, coeff)
+                    push!(data, fs.coeff*sign)
                 end
             end
         end
     end
-    @show rowindices, colindices, data
-    return sparse(rowindices, colindices, data, n, n);
+    return sparse(rowindices, colindices, data, n, n)
 end
 
-function CSCSimpleFH_under_bases(h::CSCSimpleFermionHamiltonian, bases::Vector{ConstParticalNumberFermionBasis{PN}},dict::Dict{ConstParticalNumberFermionBasis{PN}, Int64}) where PN
+function CSCSimpleFH_under_bases(h::CSCSimpleFermionHamiltonian, bases::Vector{FockBasis{PN}},dict::Dict{FockBasis{PN}, Int64}) where PN
     return CSCFH_under_bases(h.quadratic, bases, dict)+CSCFH_under_bases(h.quartic, bases, dict)
+end
+
+function parity_judge(::Type{T},flavors::NTuple{N,Int}, basis::FockBasis{PN}) where {T,N,PN}
+    inds = basis.indices
+    cflavors = flavors[1:(N÷2)]
+    aflavors = flavors[(N÷2+1):N]
+    cinds = setdiff(inds, aflavors)
+    if !(aflavors ⊆ inds) || !isdisjoint(cflavors, cinds)
+        return zero(T)
+    end
+    return iseven((sum([count(<(aflavors[i]),inds) for i in 1:N÷2]) + sum([count(<(cflavors[i]),cinds) for i in 1:N÷2]))) ? one(T) : -one(T)
+end
+
+function apply_SFS_on_basis_withoutsign(flavors::NTuple{N,Int}, basis::FockBasis{PN}) where {N,PN}
+    new_indices = replace(basis.indices, Dict(zip(flavors[(N÷2+1):N],flavors[1:(N÷2)]))...)
+    return FockBasis(new_indices)
 end

@@ -8,5 +8,5 @@ using FermionSimulation.Graphs
     hc=CSCSimpleFermionHamiltonian(h, 7)
     bases = all_bases(1,7)
     dict = bases_dict(bases)
-    @test CSCSimpleFH_under_bases(hc, bases, dict) == -adjacency_matrix(sg)/2
+    @test CSCSimpleFH_under_bases(hc, bases, dict) == adjacency_matrix(sg)/2
 end

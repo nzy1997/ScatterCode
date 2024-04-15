@@ -1,13 +1,14 @@
 using Test
 using FermionSimulation
 using FermionSimulation.SparseArrays
+using FermionSimulation: apply_SFS_on_basis_withoutsign, parity_judge
 
 @testset "all_bases" begin
     bases = all_bases(3,5)
-    @test bases[2] == ConstParticalNumberFermionBasis((1,2,4),)
-    @test !(bases[2] == ConstParticalNumberFermionBasis((1,2,5),))
+    @test bases[2] == FockBasis((1,2,4),)
+    @test !(bases[2] == FockBasis((1,2,5),))
     dict = bases_dict(bases)
-    @test dict[CPNFB((1,2,4),)] == 2
+    @test dict[FockBasis((1,2,4),)] == 2
 end
 
 # h = (-2.0, (c5†, c1)) + (-3.0, (c4†, c3)) + (-1.0, (c4†, c3)) + (2.0, (c3†, c5†, c1, c4)) + (-3.0, (c3†, c5†, c1, c5))
@@ -22,4 +23,19 @@ end
     bases = all_bases(3,5)
     dict = bases_dict(bases)
     @test CSCSimpleFH_under_bases(h, bases, dict) == sparse([8, 2, 9, 10, 6, 9, 8, 8, 10], [1, 1, 2, 4, 5, 8, 2, 3, 6], [-2.0, -4.0, -2.0, -2.0, -4.0, -4.0, 2.0, -3.0, 3.0], 10, 10)
+end
+
+@testset "apply_SFS_on_basis_withoutsign" begin
+    fs = StandardFermionicString(2.0, annilation(2), creation(3), annilation(1), creation(5))
+    basis = FockBasis((1,2,4),)
+    flavors = ntuple(i->fs.ops[i].flavor, 4)
+    @test apply_SFS_on_basis_withoutsign(flavors, basis) == FockBasis((5,3,4),)
+end
+
+@testset "parity_judge" begin
+    fs = StandardFermionicString(2.0, annilation(2), creation(3), annilation(1), creation(5))
+    fs3 = StandardFermionicString(-1.0, creation(4), annilation(3))
+    basis = FockBasis((1,2,3),)
+    flavors = ntuple(i->fs3.ops[i].flavor, 2)
+    @test parity_judge(Float64,flavors, basis) == 1.0
 end
