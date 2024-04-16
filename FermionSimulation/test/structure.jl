@@ -10,3 +10,4 @@ using FermionSimulation.Graphs
     dict = bases_dict(bases)
     @test CSCSimpleFH_under_bases(hc, bases, dict) == adjacency_matrix(sg)/2
 end
+

@@ -1,21 +1,27 @@
+function animate_graph(gt::GraphWithTails, waves::AbstractVector;
+    name="chains", pathname="", vertex_size=10.0, layout=:stress,
+    step=ceil(Int, length(waves)/100), framerate=10)
+    locs = assign_locations(gt, layout)
+    edgs = [(e.src, e.dst) for e in edges(gt.graph)]
+    (xmin, ymin), (Dx, Dy), config = LuxorGraphPlot.get_config(locs, edgs)
+    width, height = round(Int, Dx * config.unit), round(Int, Dy * config.unit)
+    nframes = ceil(Int, length(waves) / step)
+    
+    function frame(scene, framenumber::Int)
+        Luxor.origin(0, 0)
+        vertex_sizes=vertex_size .* (waves[min(length(waves), 1+step*(framenumber-1))])
+        vertex_stroke_colors=[i in gt.center ? "red" : "black" for i=1:nv(gt.graph)]
+        LuxorGraphPlot._show_graph(locs, edgs; texts=fill("", nv(gt.graph)),
+            vertex_sizes, vertex_stroke_colors)
+    end
+    mov = Movie(width, height, name)
+    animate(mov, [Scene(mov, frame, 1:nframes)]; creategif=true, pathname, framerate)
+end
+
 function animate_wave(gt::GraphWithTails, waves::AbstractVector;
     name="chains", pathname="", vertex_size=10.0, layout=:stress,
     step=ceil(Int, length(waves)/100), framerate=10)
-locs = assign_locations(gt, layout)
-edgs = [(e.src, e.dst) for e in edges(gt.graph)]
-(xmin, ymin), (Dx, Dy), config = LuxorGraphPlot.get_config(locs, edgs)
-width, height = round(Int, Dx * config.unit), round(Int, Dy * config.unit)
-nframes = ceil(Int, length(waves) / step)
-
-function frame(scene, framenumber::Int)
-    Luxor.origin(0, 0)
-    vertex_sizes=vertex_size .* abs2.(waves[min(length(waves), 1+step*(framenumber-1))])
-    vertex_stroke_colors=[i in gt.center ? "red" : "black" for i=1:nv(gt.graph)]
-    LuxorGraphPlot._show_graph(locs, edgs; texts=fill("", nv(gt.graph)),
-        vertex_sizes, vertex_stroke_colors)
-end
-mov = Movie(width, height, name)
-animate(mov, [Scene(mov, frame, 1:nframes)]; creategif=true, pathname, framerate)
+    animate_graph(gt, Broadcast.BroadcastFunction(abs2).(waves);name, pathname, vertex_size, layout,step, framerate)
 end
 
 function assign_locations(gt::GraphWithTails, layout::Symbol=:manual)

@@ -12,6 +12,7 @@ creation(flavor::Int) = Fop(true, flavor)
 annilation(flavor::Int) = Fop(false, flavor)
 
 # creation operators are moved to the left
+# TODO: 1. Assert that there is no creation(anihilation) operators with the same flavor. 2. Assert that creation operators is on the left of the annihilation operators with the same flavor.
 struct StandardFermionicString{T, N} <: AbstractOperator
 	coeff::T
 	ops::NTuple{N, Fop}

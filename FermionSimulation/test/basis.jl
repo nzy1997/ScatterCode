@@ -18,7 +18,7 @@ end
     fs2 = StandardFermionicString(3.0, annilation(3), creation(4))
     fs3 = StandardFermionicString(-1.0, creation(4), annilation(3))
     fs4 = StandardFermionicString(2.0, annilation(4), creation(3), annilation(1), creation(5))
-    fs5 = StandardFermionicString(3.0, annilation(1), creation(3), annilation(5), creation(5))
+    fs5 = StandardFermionicString(-3.0, annilation(1), creation(3), creation(5), annilation(5))
     h=CSCSimpleFermionHamiltonian(SimpleFermionHamiltonian([fs1,fs2,fs3],[fs4,fs5]),5)
     bases = all_bases(3,5)
     dict = bases_dict(bases)
@@ -38,4 +38,12 @@ end
     basis = FockBasis((1,2,3),)
     flavors = ntuple(i->fs3.ops[i].flavor, 2)
     @test parity_judge(Float64,flavors, basis) == 1.0
+end
+
+@testset "kron_state" begin
+    wave1 = [1.0, 2.0,0.0, 0.0, 0.0, 0.0]
+    wave2 = [0.0, 0.0, 5.0, 6.0, 3.0, 4.0]
+    wave3 = [0.0, 0.0, 0.0, 0.0, 3.0, 4.0]
+    @test length(kron_state(wave1, wave2)) == 15
+    @test length(kron_state(wave1, wave2, wave3)) == 20
 end

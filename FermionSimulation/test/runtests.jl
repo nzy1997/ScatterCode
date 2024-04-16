@@ -10,7 +10,7 @@ end
 end
 
 @testset "graph_struct.jl" begin
-    include("graph_struct.jl")
+    include("structure.jl")
 end
 
 @testset "time_evolve.jl" begin

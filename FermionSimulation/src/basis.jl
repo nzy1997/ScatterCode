@@ -25,12 +25,12 @@ function bases_dict(bases::Vector{FockBasis{PN}}) where PN
 end
 
 function CSCFH_under_bases(h::CSCFH{T,N}, bases::Vector{FockBasis{PN}},dict::Dict{FockBasis{PN}, Int64}) where {T,N,PN}
-    rowindices, colindices, data = Int[],Int[],T[]
     locations = Tuple.(combinations(1:PN, N÷2))
-    _CSCFH_under_bases!(h, bases, dict, rowindices, colindices, data, locations)
+    _CSCFH_under_bases!(h, bases, dict, locations)
 end
 
-function _CSCFH_under_bases!(h::CSCFH{T,N}, bases::Vector{FockBasis{PN}},dict::Dict{FockBasis{PN}, Int64}, rowindices, colindices, data, locations) where {T,N,PN}
+function _CSCFH_under_bases!(h::CSCFH{T,N}, bases::Vector{FockBasis{PN}},dict::Dict{FockBasis{PN}, Int64}, locations) where {T,N,PN}
+    rowindices, colindices, data = Int[],Int[],T[]
     n = length(bases)
     for base in bases
         for loc in locations
@@ -60,14 +60,31 @@ function parity_judge(::Type{T},flavors::NTuple{N,Int}, basis::FockBasis{PN}) wh
     inds = basis.indices
     cflavors = flavors[1:(N÷2)]
     aflavors = flavors[(N÷2+1):N]
-    cinds = setdiff(inds, aflavors)
-    if !(aflavors ⊆ inds) || !isdisjoint(cflavors, cinds)
+    if !(aflavors ⊆ inds) || (count(i-> (inds[i] ∈ cflavors && inds[i] ∈ aflavors),1:PN)!= count(i-> (inds[i] ∈ cflavors),1:PN))
         return zero(T)
     end
-    return iseven((sum([count(<(aflavors[i]),inds) for i in 1:N÷2]) + sum([count(<(cflavors[i]),cinds) for i in 1:N÷2]))) ? one(T) : -one(T)
+    return iseven((sum(i->count(<(aflavors[i]),inds), 1:N÷2) + sum(i->count(<(cflavors[i]),aflavors)+count(<(cflavors[i]),inds), 1:N÷2))) ? one(T) : -one(T)
 end
 
 function apply_SFS_on_basis_withoutsign(flavors::NTuple{N,Int}, basis::FockBasis{PN}) where {N,PN}
-    new_indices = replace(basis.indices, Dict(zip(flavors[(N÷2+1):N],flavors[1:(N÷2)]))...)
-    return FockBasis(new_indices)
+    inds = basis.indices
+    for i in 1:N÷2
+        inds = replace(inds, flavors[N÷2+i]=>flavors[i])
+    end
+    return FockBasis(inds)
+end
+
+# identical particle kronecker product state
+function kron_state(wave1::AbstractVector{T},waves::AbstractVector{T}...) where T
+    return identical_particle_wave(kron(wave1,waves...),length(wave1),length((wave1,waves...)))
+end
+kron_state(wave1::AbstractVector) = wave1
+
+function identical_particle_wave(wave::AbstractVector{T},n::Int,PN::Int) where T
+    @assert length(wave) == n^PN
+    return wave[tuple_index.(NTuple{PN, Int}.(combinations(1:n,PN)),n)]
+end
+
+function tuple_index(t::NTuple{PN,Int},n::Int) where PN
+    return sum(i->(t[i]-1)*n^(PN-i),1:PN)+1
 end

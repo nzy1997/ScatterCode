@@ -11,7 +11,7 @@ animate_wave(gt, waves, step = 100, pathname = "examples/chain1.gif")
 using FermionSimulation
 h = get_hamiltonian_from_sg(gt.graph)
 n = nv(gt.graph)
-hc=CSCSimpleFermionHamiltonian(h, n)
+hc = CSCSimpleFermionHamiltonian(h, n)
 bases = all_bases(1,n)
 dict = bases_dict(bases)
 H = CSCSimpleFH_under_bases(hc, bases, dict)

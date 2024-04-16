@@ -95,3 +95,5 @@ function get_r1(s::AbstractMatrix)
 end
 
 relection_rate(s::AbstractMatrix) = sum(abs2, get_r1(s))
+
+# TODO: effective_length
