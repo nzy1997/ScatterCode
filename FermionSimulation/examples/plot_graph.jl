@@ -3,4 +3,5 @@ using Plots, GraphRecipes
 using FermionSimulation
 
 g = example_gt_cz(2,4).graph
-graphplot(g, curves=false)
+g = example_gt_doublechain(4).graph
+graphplot(gt.graph, curves=false)

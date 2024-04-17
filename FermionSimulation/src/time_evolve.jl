@@ -31,12 +31,13 @@ function position_operators(n::Int, bases::Vector{FockBasis{PN}}, dict::Dict{Foc
     return [ComplexF64.(CSCSimpleFH_under_bases(CSCSimpleFermionHamiltonian(SimpleFermionHamiltonian([StandardFermionicString(1.0, creation(i), annilation(i))]), n), bases, dict)) for i in 1:n]
 end
 
-function simulate_gt(gt::GraphWithTails, k0::Float64, intails::Vector{Int};Δt::Real=1.0, Nt::Int=999,tag::Bool=true,fs::Union{Nothing,StandardFermionicString}=nothing)
+function simulate_gt(gt::GraphWithTails, k0::Float64, intails::Vector{Int};Δt::Real=1.0, Nt::Int=999,tag::Bool=true,hs::Union{Nothing,SimpleFermionHamiltonian}=nothing)
     particle_num = length(intails)
     wave = kron_state([gaussian_packet_ontail(gt; intail, k0, x0 = round(Int, 0.2 * length(gt.tails[intail])), Δx = 0.02 * length(gt.tails[intail])) for intail in intails]...)
+    @show norm(wave)
     H ,bases, dict,n = get_CSCSimpleFH(gt.graph, particle_num)
-    if fs !== nothing
-        H = H + CSCSimpleFH_under_bases(CSCSimpleFermionHamiltonian(SimpleFermionHamiltonian([fs]), n), bases, dict)
+    if hs !== nothing
+        H = H + CSCSimpleFH_under_bases(CSCSimpleFermionHamiltonian(hs, n), bases, dict)
     end
     if tag
         operators = position_operators(n, bases, dict)

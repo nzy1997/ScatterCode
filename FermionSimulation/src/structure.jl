@@ -61,3 +61,10 @@ function example_gt_cz(tailsize::Int, middle_tail::Int)
     # add_edge!(sg2, 26 + 3 * middle_tail+2, n+2+middle_tail+1)
     return graph_with_tails(sg2; heads = [1,2,n], tailsize), 26 + 3 * middle_tail+2, n+2+middle_tail+1
 end
+
+function example_gt_doublechain(n1::Int)
+    g = path_graph(n1)
+    add_vertices!(g, 1)
+    g = graph_with_tails(g; heads = [n1+1], tailsize = n1-1).graph
+    return graph_with_tails(g; heads = [1,n1+1], tailsize=n1)
+end
