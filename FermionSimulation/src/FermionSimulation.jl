@@ -19,7 +19,7 @@ export apply_SFS_on_basis, CSCFH_under_bases, CSCSimpleFH_under_bases
 export kron_state, identical_particle_wave
 
 # structure
-export get_hamiltonian_from_sg, get_CSCSimpleFH, example_gt_cz, example_gt_h, example_gt_doublechain
+export get_hamiltonian_from_sg, get_CSCSimpleFH, example_gt_cz, example_gt_h, example_gt_doublechain,example_gt_mss
 
 # time_evo
 export time_evolve, expect_value, position_operators, simulate_gt
