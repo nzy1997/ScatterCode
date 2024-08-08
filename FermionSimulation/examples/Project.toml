@@ -1,0 +1,6 @@
+[deps]
+DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
+FermionSimulation = "d4b6a69c-93b6-4511-bee7-08423586eaa8"
+GraphRecipes = "bd48cda9-67a9-57be-86fa-5b3c104eda73"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+Scattering = "2c322c1a-d53d-41aa-9e42-03a3e63ddf04"

@@ -31,7 +31,7 @@ export generate_gaussian_packet
 export simulate_chain, simulate_graph_with_tails, simulate_ScatterGraph
 
 # visualize
-export animate_wave, plot_transmission
+export animate_wave, plot_transmission, animate_graph
 
 include("scattering_center.jl")
 include("structures.jl")

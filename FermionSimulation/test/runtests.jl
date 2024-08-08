@@ -8,3 +8,11 @@ end
 @testset "basis.jl" begin
     include("basis.jl")
 end
+
+@testset "graph_struct.jl" begin
+    include("structure.jl")
+end
+
+@testset "time_evolve.jl" begin
+    include("time_evolve.jl")
+end
