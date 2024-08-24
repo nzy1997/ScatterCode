@@ -10,3 +10,4 @@ _learn
 .DS_Store
 *.gif
 temp_save
+.vscode/
